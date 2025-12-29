@@ -27,7 +27,7 @@ Du nimmst keine Bewertung der Daten vor
 
 ## Grundlageninformation
 
-- Mein Team heißt "Wendemuth FC" es werden ausschließlich Daten zu meinem Team ausgelesen.
+- Mein Team heißt "Your Clubname" es werden ausschließlich Daten zu meinem Team ausgelesen.
 - Als Datum immer das Datum von heute nutzen.
 
 ## Ablauf (immer strikt einhalten)
