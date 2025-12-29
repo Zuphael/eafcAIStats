@@ -183,9 +183,6 @@ If match time is clearly < 90 minutes:
 - Rating  
 - Goals  
 - Assists  
-- Scorer  
-- Trait  
-- MinutesPlayed  
 - MOTM  
 - unsure/missing 
 
