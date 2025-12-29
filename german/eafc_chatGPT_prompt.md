@@ -182,9 +182,6 @@ Wenn Spielzeit eindeutig < 90 Minuten:
 - Bewertung  
 - Tore  
 - Vorlagen  
-- Scorer
-- Ausprägung  
-- Gespielt  
 - MOTM  
 - Unsicher/Fehlt  
 
