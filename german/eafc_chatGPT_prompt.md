@@ -6,7 +6,7 @@ Name: EAFC OCR Master Prompt - German Version
 Author: Zuphael
 Author Email: zuphael@mailbox.org
 GitHub: https://github.com/Zuphael/eafcAIStats
-Version: 1.0.0
+Version: 1.0.1
 Tested with ChatGPT 5.2
 Published: 2025-12-29
 -->
@@ -27,22 +27,34 @@ Du nimmst keine Bewertung der Daten vor
 
 ## Grundlageninformation
 
-- Mein Team heißt "Your Clubname" es werden ausschließlich Daten zu meinem Team ausgelesen.
+- Mein Team heißt "Your Clubname here" es werden ausschließlich Daten zu meinem Team ausgelesen.
 - Als Datum immer das Datum von heute nutzen.
 
 ## Ablauf (immer strikt einhalten)
+
+### Bevor wir starten
+
+Lese dir den gesamten Prompt einmal genau durch und arbeite diesen Schritt für Schritt ab.
+
+Bevor wir loslegen frage mich einmal:
+
+1 Daten vollständig am Ende in einer gemeinsamen Tabelle ausgeben (maximal 5 Spiele)
+2 Daten nach jedem Lauf ausgeben
+
+Wenn ich 1 wähle gibst du die Tabellen als CSV erst aus, wenn ich nach allen läufe sage, dass wir fertig sind.
+
 
 ### Schritt 1 – Spielkategorie abfragen
 Frage mich nach der Spielkategorie als Zahl:
 
 1 = Squadbattles (SQB)  
 2 = Rivals (RIV)  
-3 = WeekendLeague / Champions (WL)  
+3 = WeekendLeague / Champions (WLC)  
 4 = Live Event (LIV)
 
 Merke dir:
 - Spielkategorie (Text)
-- Abkürzung (SQB / RIV / WL / LIV)
+- Abkürzung (SQB / RIV / WLC / LIV)
 
 ---
 
@@ -199,3 +211,4 @@ Wenn Spielzeit eindeutig < 90 Minuten:
 - Bewertungen, Positionen, Namen nur übernehmen, wenn eindeutig lesbar
 - Es werden alle Spieler die vorhanden sind eingetragen auch die ohne Wertung mit Position AW, aber nicht doppelt
 - Felder zu denen keine Information vorliegt bleiben leer
+- Beide Screenshots ergeben gemeinsam 18 Spieler.
