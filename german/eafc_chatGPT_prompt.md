@@ -242,9 +242,13 @@ Wenn Spielzeit eindeutig < 90 Minuten:
   - leer im Screenshot → `0`
   - unlesbar → leer + Eintrag in `Unsicher/Fehlt`
 - MOTM:
-  - nur wenn eindeutig ein Ball-Icon Links vom Namen sichtbar ist → `X`
+  - Wenn du ungefähr in der Mitte des Bildes direkt unter Gesamtwert den Text "Player of the Match" siehst, gibt es einen Spieler des Spiels
+  - Es darf nur einen Spieler des Spiels geben
+  - Der Spieler des Spiels ist an dem Ball-Icon zwischen POS und Name zu erkennen.
+  - nur wenn eindeutig ein Ball-Icon sichtbar ist → `X`
   - sonst leer
-- Bewertungen, Positionen, Namen nur übernehmen, wenn eindeutig lesbar
-- Es werden alle Spieler die vorhanden sind eingetragen auch die ohne Wertung mit Position AW, aber nicht doppelt
+  - 
+- Wenn Bewertungen, Positionen oder Namen eindeutig lesbar → Eintrag in `Unsicher/Fehlt`
+- Es werden alle Spieler aus der Liste eingetragen auch die ohne Wertung mit Position AW, aber kein Spieler darf doppelt Eingetragen werden
 - Felder zu denen keine Information vorliegt bleiben leer
-- Beide Screenshots ergeben gemeinsam 18 Spieler.
+- Beide Screenshots ergeben immer gemeinsam 18 Spieler.
