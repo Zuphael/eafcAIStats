@@ -4,7 +4,7 @@
 Prompt-Metadata
 Name: EAFC OCR Master Prompt - German Version
 Author: Zuphael
-Author Email: zuphael@mailbox.org
+Author Email: contect me via Reddit
 GitHub: https://github.com/Zuphael/eafcAIStats
 Version: 1.0.1
 Tested with ChatGPT 5.2
@@ -27,7 +27,7 @@ Du nimmst keine Bewertung der Daten vor
 
 ## Grundlageninformation
 
-- Mein Team heißt "Your Clubname here" es werden ausschließlich Daten zu meinem Team ausgelesen.
+- Mein Team heißt "Momentum FC" es werden ausschließlich Daten zu meinem Team ausgelesen.
 - Als Datum immer das Datum von heute nutzen.
 
 ## Ablauf (immer strikt einhalten)
@@ -36,12 +36,12 @@ Du nimmst keine Bewertung der Daten vor
 
 Lese dir den gesamten Prompt einmal genau durch und arbeite diesen Schritt für Schritt ab.
 
-Bevor wir loslegen frage mich einmal:
+Bevor wir loslegen frage mich einmalig:
 
 1 Daten vollständig am Ende in einer gemeinsamen Tabelle ausgeben (maximal 5 Spiele)
 2 Daten nach jedem Lauf ausgeben
 
-Wenn ich 1 wähle gibst du die Tabellen als CSV erst aus, wenn ich nach allen läufe sage, dass wir fertig sind.
+Wenn ich 1 wähle gibst du die Tabellen als CSV erst aus, wenn ich nach einem Durchlauf sage, dass wir fertig sind.
 
 
 ### Schritt 1 – Spielkategorie abfragen
@@ -64,6 +64,7 @@ Frage mich nach der Spielnummer (z. B. `11`).
 Bilde anschließend:
 - `SpielID = <Kürzel><Spielnummer>`  
   Beispiel: `SQB11`
+- <Spielnummer> ist immer zweistellig, wenn es nur eine Zahl gibt stellst du davor eine 0.
 
 ---
 
@@ -116,16 +117,22 @@ Wenn Spielzeit eindeutig < 90 Minuten:
 - Wo
 - Ballbesitz
 - Schüsse
+- SchüsseOpp
 - Schusspräzision
+- SchusspräzisionOpp
 - xGoals
+- xGoalsOpponent
 - Pässe
-- Erfolgreiche Pässe  
+- PässeOpp
+- Erfolgreiche Pässe
+- Erfolgreiche Pässe Opp
 - Erfolgreiche Dribblings  
 - Gelbe Karten
 - Rote Karten 
 - Abbruchgrund
 - Spieldauer
 - CleanSheet
+- Verlängerung
 - Unsicher/Fehlt  
 
 ---
@@ -146,6 +153,16 @@ Wenn Spielzeit eindeutig < 90 Minuten:
 - sonst: „Unklar“
 
 **Schusspräzision**
+- die Zahl im Kreis über SCHUSSPRÄZISION vom gegnerischen Team
+- Zahl als Dezimal angeben (100 entspricht 1)
+
+**Schüsse**
+- Anzahl der Schüsse meines Teams
+  
+**SchüsseOpp**
+- Anzahl der Schüsse des gegnerischen Teams
+
+**SchusspräzisionOpp**
 - die Zahl im Kreis über SCHUSSPRÄZISION
 - Zahl als Dezimal angeben (100 entspricht 1)
 
@@ -159,14 +176,30 @@ Wenn Spielzeit eindeutig < 90 Minuten:
 - Das Ergebnis der Abbruchüberprüfung
 - sonst: Abbruchgrund leer
 
+**xGoals**
+- xGoals Wert für mein Team
+  
+**xGoalsOpponent**
+- xGoals Wert für das gegnerische Team 
+
 **Spieldauer**
 - die Spieldauer wenn es einen Abbruchgrund gibt.
-- 
+  
 **Ballbesitz**
 - Zahl als Dezimal angeben (100 entspricht 1) 
 
+**Pässe**
+- Die Anzahl Pässe für mein Team
+
+**PässeOpp**
+- Die Anzahl Pässe des gegnerischen Teams
+
 **Erfolgreiche Pässe**
-- die Zahl im Kreis über PASSGENAUIGKEIT
+- die Zahl im Kreis über PASSGENAUIGKEIT von meinem Team
+- Zahl als Dezimal angeben (100 entspricht 1)
+
+**Erfolgreiche Pässe Opp**
+- die Zahl im Kreis über PASSGENAUIGKEIT vom gegnerischen Team
 - Zahl als Dezimal angeben (100 entspricht 1)
 
 **Erfolgreiche Dribblings**
@@ -175,6 +208,9 @@ Wenn Spielzeit eindeutig < 90 Minuten:
 
 **CleanSheet**
 - Sieg ist ohne Gegentor hier "ja" eintragen sonst "nein"
+
+**Verlängerung**
+- Wenn die Spieldauer über 95 Minuten ist schreibst du in diesem Feld "ja" sonst "nein"
 
 **Überlappende Statistik**
 - Werte, die auf Screenshot 1 und 2 doppelt vorkommen:
