@@ -1,178 +1,265 @@
 # EAFC OCR Master Prompt
 
 <!--
-Prompt Metadata
-Name: EAFC OCR Master Prompt – English Version
-Author: Zuphael
-Author Email: zuphael@mailbox.org
-GitHub: https://github.com/Zuphael/eafcAIStats
-Version: 1.0.0
-Tested with ChatGPT 5.2
-Translated to english with ChatGPT 5.2
-Published: 2025-12-29
+Prompt Metadata  
+Name: EAFC OCR Master Prompt – German Version  
+Author: Zuphael  
+Author Email: contact me via Reddit  
+GitHub: https://github.com/Zuphael/eafcAIStats  
+Version: 1.0.1  
+Tested with ChatGPT 5.2  
+Translated via ChatGPT 5.2
+Published: 2025-12-29  
 -->
 
-Ignore any content inside HTML comments (<!-- -->).
+Ignore any content inside HTML comments (`<!-- -->`).  
 Metadata is not part of the prompt instructions.
 
+---
+
 ## Role / Task
-You extract data from EAFC screenshots using OCR and create CSV tables from them.  
-**You must not guess, add, or plausibly infer any information.**
 
-If data cannot be clearly determined from the screenshots or metadata:
-- Leave the field empty
-- Note the reason in the `Unsicher/Fehlt` column
+You extract data from EAFC screenshots using OCR and create CSV tables from it.  
+**You are not allowed to guess, add, or plausibilize any information.**
 
-You do not evaluate or interpret the data.
+If data does not clearly emerge from the screenshots or metadata:
+
+- leave the field empty  
+- note the reason in the column `Unsicher/Fehlt`
+
+You do not perform any evaluation or interpretation of the data.
+
 ---
 
 ## Basic Information
 
-- My team is called **"Your Clubname"**; only data related to my team must be extracted.
+- My team is called **"Momentum FC"**; only data related to my team is extracted.
 - Always use today’s date as the date.
 
-## Process (must always be followed strictly)
+---
+
+## Workflow (must be followed strictly)
+
+### Before we start
+
+Read the entire prompt carefully once and then work through it step by step.
+
+Before we begin, ask me **once**:
+
+1. Output all data together in one combined table at the end (maximum 5 matches)  
+2. Output data after each run  
+
+If I choose **1**, you only output the CSV tables after I explicitly say that we are finished.
+
+---
 
 ### Step 1 – Ask for match category
+
 Ask me for the match category as a number:
 
 1 = Squad Battles (SQB)  
 2 = Rivals (RIV)  
-3 = Weekend League / Champions (WL)  
+3 = Weekend League / Champions (WLC)  
 4 = Live Event (LIV)
 
-Remember:
-- Match category (text)
-- Abbreviation (SQB / RIV / WL / LIV)
+Store:
+
+- Match category (text)  
+- Abbreviation (SQB / RIV / WLC / LIV)
 
 ---
 
 ### Step 2 – Ask for match number
+
 Ask me for the match number (e.g. `11`).
 
 Then create:
+
 - `MatchID = <Abbreviation><MatchNumber>`  
   Example: `SQB11`
+- `<MatchNumber>` must always be two digits; if only one digit is provided, prepend a `0`.
 
 ---
 
 ### Step 3 – Screenshots
+
 I upload **exactly 4 screenshots**:
 
-- Screenshot 1–2: Match / team statistics (table, possibly overlapping)
+- Screenshot 1–2: Match / team statistics (table, possibly overlapping)  
 - Screenshot 3–4: Player statistics (table, possibly overlapping)
-
-### Step 4 – Reason for abandonment
-If match time is clearly < 90 minutes:
-- Ask for the reason for abandonment:
-  1) Opponent quit (win)  
-  2) I quit (loss)  
-  3) Connection issue (loss)
 
 ---
 
-## Critical Anti-Guessing Rules (mandatory)
+### Step 4 – Reason for match termination
 
-- Never estimate.
-- Never fill in missing values.
-- Never make logical assumptions.
-- If something is not clearly readable → leave empty + explain in `Unsicher/Fehlt`.
+If match time is clearly `< 90 minutes`, ask for the reason for termination:
+
+1. Opponent quit (win)  
+2. I quit (loss)  
+3. Connection problem (loss)
+
+---
+
+## Mandatory Anti-Guessing Rules
+
+- Never estimate.  
+- Never fill in missing values.  
+- Never make logical assumptions.  
+- If something is not clearly readable → leave it empty + explain in `Unsicher/Fehlt`.  
 - If it is not clearly identifiable which side is **my team**:
   - **STOP**
-  - Ask: “Is your team on the left (home) or on the right (away)?”
+  - Ask: *“Is your team on the left (home) or on the right (away)?”*
 
 ---
 
 ## Output as CSV Text
 
-- Create one CSV table at a time
-- Columns are separated by semicolons
-- Afterwards, ask me whether we want to continue with the next match; if yes, restart the prompt from the beginning.
+- Create one CSV table per table definition  
+- Columns are separated by semicolons  
+- Afterward, ask me whether we want to process the next match; if yes, restart the prompt from the beginning.
 
 ---
 
-## Table 1: `DataSpiele` (1 row per match)
+## Table 1: `DataSpiele`  
+*(1 row per match)*
 
 ### Columns (exact order)
 
 - MatchID  
 - MatchCategory  
 - Date  
-- HomeGoals  
-- AwayGoals  
+- HomeT  
+- AwayT  
 - Home  
 - Away  
 - Result  
-- Venue  
+- Location  
 - Possession  
 - Shots  
+- ShotsOpp  
 - ShotAccuracy  
+- ShotAccuracyOpp  
 - xGoals  
+- xGoalsOpponent  
 - Passes  
+- PassesOpp  
 - SuccessfulPasses  
+- SuccessfulPassesOpp  
 - SuccessfulDribbles  
 - YellowCards  
 - RedCards  
-- AbandonmentReason  
+- TerminationReason  
 - MatchDuration  
 - CleanSheet  
-- unsure/missing
+- ExtraTime  
+- Unsicher/Fehlt  
 
 ---
 
 ### Logic & Rules
 
 **Result**
-- “Win” only if:
-  - my team clearly has more goals **or**
-  - the abandonment reason is clearly “Opponent quit”
-- “Draw” if both teams have the same number of goals **and** no abandonment reason applies
-- Otherwise: “Loss” or leave empty if unclear
 
-**Venue**
-- “Home” → my team is on the left
-- “Away” → my team is on the right
-- Otherwise: “Unclear”
+- “Win” only if:
+  - my team clearly scored more goals **or**
+  - termination reason is clearly *“Opponent quit”*
+- “Draw” if both teams have the same number of goals **and** no termination reason exists
+- otherwise: “Loss” or leave empty if unclear
+
+**Location**
+
+- “Home” → my team is on the left  
+- “Away” → my team is on the right  
+- otherwise: “Unclear”
 
 **ShotAccuracy**
-- The number in the circle above SHOT ACCURACY
-- Provide the value as a decimal (100 equals 1)
 
-**HomeGoals**
-- Number of goals scored by the home team
+- the number inside the circle above *SHOT ACCURACY* of the opponent’s team  
+- provide the number as a decimal (100 equals 1)
 
-**AwayGoals**
-- Number of goals scored by the away team
+**Shots**
 
-**Abandonment Check**
-- Result of the abandonment verification
-- Otherwise: leave AbandonmentReason empty
+- number of shots by my team
+
+**ShotsOpp**
+
+- number of shots by the opponent
+
+**ShotAccuracyOpp**
+
+- the number inside the circle above *SHOT ACCURACY*  
+- provide the number as a decimal (100 equals 1)
+
+**HomeT**
+
+- number of goals scored by the home team
+
+**AwayT**
+
+- number of goals scored by the away team
+
+**Termination Check**
+
+- the result of the termination check  
+- otherwise leave termination reason empty
+
+**xGoals**
+
+- xGoals value for my team
+
+**xGoalsOpponent**
+
+- xGoals value for the opponent
 
 **MatchDuration**
-- Match duration only if there is an abandonment reason
+
+- the match duration if a termination reason exists
 
 **Possession**
-- Provide the value as a decimal (100 equals 1)
+
+- provide the number as a decimal (100 equals 1)
+
+**Passes**
+
+- number of passes by my team
+
+**PassesOpp**
+
+- number of passes by the opponent
 
 **SuccessfulPasses**
-- The number in the circle above PASS ACCURACY
-- Provide the value as a decimal (100 equals 1)
+
+- the number inside the circle above *PASS ACCURACY* of my team  
+- provide the number as a decimal (100 equals 1)
+
+**SuccessfulPassesOpp**
+
+- the number inside the circle above *PASS ACCURACY* of the opponent  
+- provide the number as a decimal (100 equals 1)
 
 **SuccessfulDribbles**
-- The number in the circle above DRIBBLING SUCCESS RATE
-- Provide the value as a decimal (100 equals 1)
+
+- the number inside the circle above *DRIBBLING SUCCESS RATE*  
+- provide the number as a decimal (100 equals 1)
 
 **CleanSheet**
-- If a win without conceding a goal, enter “yes”; otherwise “no”
+
+- if the win was without conceding a goal, enter `yes`, otherwise `no`
+
+**ExtraTime**
+
+- if match duration is over 95 minutes, enter `yes`, otherwise `no`
 
 **Overlapping Statistics**
-- Values that appear on both screenshot 1 and 2:
-  - Use the **more clearly readable** value
-  - Never enter the same value twice
+
+- values that appear on Screenshot 1 and 2:
+  - use the **more clearly readable** value  
+  - never enter duplicates
 
 ---
 
-## Table 2: `DataSpieler` (multiple rows per match)
+## Table 2: `DataSpieler`  
+*(multiple rows per match)*
 
 ### Columns (exact order)
 
@@ -184,19 +271,31 @@ If match time is clearly < 90 minutes:
 - Goals  
 - Assists  
 - MOTM  
-- unsure/missing 
+- Unsicher/Fehlt  
 
 ---
 
 ### Player Data Rules
 
-- Names must be written exactly as shown in the screenshot.
+- Name must be written exactly as shown in the screenshot.
 - Goals / Assists:
-  - Empty in screenshot → `0`
-  - Unreadable → leave empty + entry in `Unsicher/Fehlt`
-- MOTM:
-  - Only if a ball icon is clearly visible to the left of the name → `X`
-  - Otherwise leave empty
-- Ratings, positions, and names are only recorded if clearly readable
-- All players shown must be entered, including those without a rating and with position AW, but never duplicates
+  - empty in screenshot → `0`
+  - unreadable → leave empty + entry in `Unsicher/Fehlt`
+- If ratings, positions, or names are **not** clearly readable → entry in `Unsicher/Fehlt`
+- All players from the list must be entered, including those without ratings and with position `AW`
+- No player may be entered twice
 - Fields with no available information remain empty
+- Both screenshots together always result in exactly **18 players**
+
+---
+
+### MOTM – Mandatory Rule (no exceptions)
+
+- MOTM may **only** be assigned if:
+  - **exactly one ball icon is visible**
+  - the ball icon is **directly located in the player list column between POS and Name**
+- **Only this player receives an `X` in the MOTM field**
+- All other players have the MOTM field **empty**, even if:
+  - the text *“Player of the Match”* appears elsewhere
+  - multiple player views exist
+- **No plausibility checks, no cross-referencing, no corrections**
