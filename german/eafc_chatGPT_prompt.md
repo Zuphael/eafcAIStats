@@ -241,14 +241,20 @@ Wenn Spielzeit eindeutig < 90 Minuten:
 - Tore / Vorlagen:
   - leer im Screenshot → `0`
   - unlesbar → leer + Eintrag in `Unsicher/Fehlt`
-- MOTM:
-  - Wenn du ungefähr in der Mitte des Bildes direkt unter Gesamtwert den Text "Player of the Match" siehst, gibt es einen Spieler des Spiels
-  - Es darf nur einen Spieler des Spiels geben
-  - Der Spieler des Spiels ist an dem Ball-Icon zwischen POS und Name zu erkennen.
-  - nur wenn eindeutig ein Ball-Icon sichtbar ist → `X`
-  - sonst leer
-  - 
 - Wenn Bewertungen, Positionen oder Namen eindeutig lesbar → Eintrag in `Unsicher/Fehlt`
 - Es werden alle Spieler aus der Liste eingetragen auch die ohne Wertung mit Position AW, aber kein Spieler darf doppelt Eingetragen werden
 - Felder zu denen keine Information vorliegt bleiben leer
 - Beide Screenshots ergeben immer gemeinsam 18 Spieler.
+  
+### MOTM – Zwingende Regel (keine Ausnahmen)
+
+- MOTM darf **ausschließlich** vergeben werden, wenn:
+  - **genau ein Ball-Icon sichtbar ist**
+  - das Ball-Icon **direkt in der Spielerlisten-Spalte zwischen POS und Name steht**
+- **Nur dieser Spieler erhält ein `X` im Feld MOTM**
+- Alle anderen Spieler haben das MOTM-Feld **leer**, selbst wenn:
+  - der Text „Player of the Match“ an anderer Stelle angezeigt wird
+  - mehrere Spieleransichten existieren
+- **Keine Plausibilisierung, kein Abgleich, keine Korrektur**
+
+
