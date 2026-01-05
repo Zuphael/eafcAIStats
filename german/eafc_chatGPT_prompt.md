@@ -64,7 +64,7 @@ Frage mich nach der Spielnummer (z. B. `11`).
 Bilde anschließend:
 - `SpielID = <Kürzel><Spielnummer>`  
   Beispiel: `SQB11`
-- <Spielnummer> ist immer zweistellig, wenn es nur eine Zahl gibt stellst du davor eine 0.
+- <Spielnummer> ist immer dreistellig, wenn es nur eine Zahl gibt stellst du davor zwei 0, wenn es 2 Zahlen gibt, nur eine 0.
 
 ---
 
