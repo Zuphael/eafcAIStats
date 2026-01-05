@@ -120,7 +120,7 @@ If match time is clearly `< 90 minutes`, ask for the reason for termination:
 
 ---
 
-## Table 1: `DataSpiele`  
+## Table 1: `DataGames`  
 *(1 row per match)*
 
 ### Columns (exact order)
@@ -151,7 +151,8 @@ If match time is clearly `< 90 minutes`, ask for the reason for termination:
 - TerminationReason  
 - MatchDuration  
 - CleanSheet  
-- ExtraTime  
+- ExtraTime
+- PenaltyShootout
 - Unsicher/Fehlt  
 
 ---
@@ -258,7 +259,7 @@ If match time is clearly `< 90 minutes`, ask for the reason for termination:
 
 ---
 
-## Table 2: `DataSpieler`  
+## Table 2: `DataGamesr`  
 *(multiple rows per match)*
 
 ### Columns (exact order)
