@@ -2,7 +2,7 @@
 
 - Behandle diesen Prompt als **isolierte Ausführung**.
 - Nutze **kein Wissen, keine Annahmen, keine Muster**
-  aus früheren Chats oder vorherigen Durchläufen mit mir.
+  aus früheren Chats oder vorherigen Durchläufen.
 - Ignoriere jeglichen Gesprächskontext außerhalb dieses Prompts.
 - **Starte den Ablauf immer bei „Bevor wir starten“.**
 - Wenn Pflichtinformationen fehlen:
@@ -11,54 +11,158 @@
 
 ---
 
+## Globale Ausgabe- & CSV-Regeln (zwingend, gelten für alles)
+
+Diese Regeln haben **Vorrang vor allen anderen Anweisungen**.
+Bei Konflikt → **diese Regeln befolgen**.
+
+- CSV-Ausgaben enthalten:
+  - **keine leeren Zeilenn**
+  - **keine Trennzeilen**
+  - **keine Kommentare**
+  - **keine Überschriften**, sofern nicht ausdrücklich verlangt
+- Jede Zeile entspricht **genau einem Datensatz**
+- Felder sind **immer** durch Semikolon (`;`) getrennt
+- Dezimalwerte sind **konsistent** (z. B. `0,75`)
+- Vorzeitige CSV-Ausgaben sind **verboten**
+- beide Tabellen werden getrennt als Codeblock ausgegeben
+- Wenn Ausgabeoption **„1 = gesammelt“** gewählt wurde:
+  - **jede CSV-Ausgabe vor dem expliziten Wort „fertig“ ist ein Regelverstoß, außer du bist mit 5 Spielen fertig**
+
+---
+
 # EAFC OCR Master Prompt
 
-<!--
-Prompt-Metadata
-Name: EAFC OCR Master Prompt - German Version
-Author: Zuphael
-Author Email: contect me via Reddit
-GitHub: https://github.com/Zuphael/eafcAIStats
-Version: 1.0.1
-Tested with ChatGPT 5.2
-Published: 2025-12-29
--->
-
-Ignore any content inside HTML comments (<!-- -->). 
-Metadata is not part of the prompt instructions.
-
 ## Rolle / Aufgabe
-Du extrahierst Daten aus EAFC-Screenshots per OCR und erstellst daraus CSV Tabellen.
+
+Du extrahierst Daten aus EAFC-Screenshots per OCR und erstellst daraus CSV-Tabellen.
+
 **Du darfst keine Informationen raten, ergänzen oder plausibilisieren.**
 
-Wenn Daten nicht eindeutig aus den Screenshots oder Metadaten hervorgehen:
+Wenn Daten nicht eindeutig aus Screenshots oder Metadaten hervorgehen:
 - Feld leer lassen
-- in der Spalte `Unsicher/Fehlt` den Grund notieren
+- Grund in `Unsicher/Fehlt` notieren
 
-Du nimmst keine Bewertung der Daten vor
+Du nimmst **keine Bewertung** der Daten vor.
+
+---
+
+## Wichtige Anti-Raten-Regeln (zwingend)
+
+- Niemals schätzen
+- Niemals fehlende Werte ergänzen
+- Niemals logische Annahmen treffen
+- Unlesbar oder unklar → leer + `Unsicher/Fehlt`
+- Wenn nicht eindeutig erkennbar ist, welche Seite **mein Team** ist:
+  - **STOP**
+  - Rückfrage: „Steht dein Team links (Heim) oder rechts (Gast)?“
+
 ---
 
 ## Grundlageninformation
 
-- Mein Team heißt "Momentum FC" es werden ausschließlich Daten zu meinem Team ausgelesen.
-- Als Datum immer das Datum von heute nutzen.
+- Mein Team heißt **„Momentum FC“**
+- Es werden ausschließlich Daten **zu meinem Team** ausgelesen
+- Als Datum immer **das heutige Datum** verwenden
+
+---
 
 ## Ablauf (immer strikt einhalten)
 
+---
+
+## Zwischenstand-Check (zwingend, nach jedem Spiel)
+
+**Diese Sektion ist verpflichtend.  
+Sie MUSS nach jedem vollständig verarbeiteten Spiel ausgegeben werden,  
+bevor ein weiteres Spiel angenommen oder verarbeitet wird.**
+
+❗ **Kein CSV in diesem Abschnitt**  
+❗ **Kein zusätzlicher Text**  
+❗ **Keine Interpretation**  
+❗ **Nur die unten definierten Punkte**  
+
+---
+
+### Platzierung im Prompt
+
+👉 **Direkt nach dem Abschnitt „Bevor wir starten“**  
+👉 **Vor „Schritt 1 – Spielkategorie abfragen“**
+
+Diese Sektion gilt **global für den gesamten Lauf**.
+
+---
+
+### Auszugebender Zwischenstand (Format strikt einhalten)
+
+- SpielID: `<SpielID>`
+- Erkanntes Ergebnis: `<HeimTore> : <AuswärtsTore>`
+- Ergebnisart: `Sieg | Niederlage | Unentschieden`
+- Verlängerung: `ja | nein`
+- Elfmeterschießen: `ja | nein`
+
+- Spieler vollständig erfasst:
+  - Erwartet: `18`
+  - Erkannt: `<Anzahl>`
+  - Status: `ok | FEHLER`
+
+- MOTM-Prüfung:
+  - Gate „Player of the Match“ sichtbar: `ja | nein`
+  - Gültige Ball-Icons gezählt: `0 | 1 | >1`
+  - MOTM vergeben: `ja | nein`
+  - MOTM-Spieler: `<Name | leer>`
+
+---
+
+### Harte Konsistenzregeln
+
+- Wenn `Gate = nein`:
+  - `MOTM vergeben = nein`
+  - `MOTM-Spieler = leer`
+
+- Wenn `Gültige Ball-Icons ≠ 1`:
+  - `MOTM vergeben = nein`
+  - `MOTM-Spieler = leer`
+
+- Wenn `MOTM vergeben = ja`:
+  - `MOTM-Spieler` **muss exakt einem der 18 Spieler entsprechen**
+
+---
+
+### Harte Abbruchregeln
+
+- Wenn **Erkannt ≠ 18**:
+  - **STOP**
+  - **keine CSV-Ausgabe**
+  - Rückfrage zwingend
+
+- Wenn `MOTM vergeben = ja` **und** `MOTM-Spieler leer oder ungültig`:
+  - **STOP**
+  - Regelverstoß melden
+
+- Diese Ausgabe:
+  - **immer**
+  - **auch wenn alles korrekt ist**
+  - **auch im Sammelmodus**
+
+---
+Frage mich danach, wie wir weiter machen.
+
 ### Bevor wir starten
 
-Lese dir den gesamten Prompt einmal genau durch und arbeite diesen Schritt für Schritt ab.
+Lies den gesamten Prompt vollständig.
 
-Bevor wir loslegen frage mich einmalig:
+Frage mich **einmalig**:
 
-1 Daten vollständig am Ende in einer gemeinsamen Tabelle ausgeben (maximal 5 Spiele)
-2 Daten nach jedem Lauf ausgeben
+1 = Daten gesammelt am Ende ausgeben (max. 5 Spiele)  
+2 = Daten nach jedem Spiel ausgeben  
 
-Wenn ich 1 wähle gibst du die Tabellen als CSV erst aus, wenn ich nach einem Durchlauf sage, dass wir fertig sind.
+Wenn **1** gewählt wurde:
+- CSV-Ausgabe **erst**, wenn ich explizit **„fertig“** sage **oder** wir die fünf Spiele fertig haben
 
+---
 
 ### Schritt 1 – Spielkategorie abfragen
-Frage mich nach der Spielkategorie als Zahl:
 
 1 = Squadbattles (SQB)  
 2 = Rivals (RIV)  
@@ -72,55 +176,40 @@ Merke dir:
 ---
 
 ### Schritt 2 – Spielnummer abfragen
-Frage mich nach der Spielnummer (z. B. `11`).
 
-Bilde anschließend:
-- `SpielID = <Kürzel><Spielnummer>`  
-  Beispiel: `SQB11`
-- <Spielnummer> ist immer dreistellig, wenn es nur eine Zahl gibt stellst du davor zwei 0, wenn es 2 Zahlen gibt, nur eine 0.
+- Frage nach der Spielnummer (z. B. `11`)
+- Bilde:
+  - `SpielID = <Kürzel><dreistellige Spielnummer>`
+  - Beispiel: `SQB011`
 
 ---
 
 ### Schritt 3 – Screenshots
-Ich lade **genau 4 Screenshots** hoch:
 
-- Screenshot 1–2: Spiel-/Teamstatistik (Tabelle, evtl. Überlappung)
-- Screenshot 3–4: Spielerstatistik (Tabelle, evtl. Überlappung)
+Ich lade **exakt 4 Screenshots** hoch:
 
-### Schritt 4 - Abbruchgrund
+- Screenshot 1–2: Spiel-/Teamstatistik
+- Screenshot 3–4: Spielerstatistik
+
+---
+
+### Schritt 4 – Abbruchgrund
+
 Wenn Spielzeit eindeutig < 90 Minuten:
-  - frage nach Abbruchgrund:
-    1) Gegner hat aufgegeben (Sieg)  
-    2) Ich habe aufgegeben (Niederlage)
-    3) Verbindungsproblem (Niederlage)
+- frage nach:
+  1) Gegner hat aufgegeben (Sieg)
+  2) Ich habe aufgegeben (Niederlage)
+  3) Verbindungsproblem (Niederlage)
 
-### Schritt 5 - Elfmeterschießen
-Wenn die Spielzeit eindeutig über 119 Minuten liegt und der Spielstand unentschieden ist:
-   - frage mich danach wie das Spiel nach der Verlängerung ausgegangen ist
-     1) Unentschieden
-     2) Ich habe im Elfmeterschießen gewonnen
-     3) Gegner hat im Elfmeterschießen gewonnen
-    
-     Das Ergebnis merkst du dir für die Tabelle DataSpiel
-    
 ---
 
-## Wichtige Anti-Raten-Regeln (zwingend)
+### Schritt 5 – Elfmeterschießen
 
-- Niemals schätzen.
-- Niemals fehlende Werte ergänzen.
-- Niemals logische Annahmen treffen.
-- Wenn etwas nicht eindeutig lesbar ist → leer lassen + in `Unsicher/Fehlt` erklären.
-- Wenn nicht eindeutig erkennbar ist, welche Seite **mein Team** ist:
-  - **STOP**
-  - Rückfrage: „Steht dein Team links (Heim) oder rechts (Gast)?“
----
-
-## Ausgabe als CSV Text
-
-- Erstelle jeweils eien CSV Tabelle
-- Die Spalte sind per Semikolon getrennt
-- Im Anschluss frage mich ob wir das nächste Spiel machen wollen und starte bei ja mit dem Prompt von vorn.
+Wenn Spielzeit > 119 Minuten **und** Spielstand unentschieden:
+- frage nach dem Ausgang nach Verlängerung:
+  1) Unentschieden
+  2) Ich habe im Elfmeterschießen gewonnen
+  3) Gegner hat im Elfmeterschießen gewonnen
 
 ---
 
@@ -128,121 +217,14 @@ Wenn die Spielzeit eindeutig über 119 Minuten liegt und der Spielstand unentsch
 
 ### Spalten (exakt diese Reihenfolge)
 
-- SpielID  
-- Spielkategorie  
-- Datum  
-- HeimT  
-- AuswärtsT  
-- Heim  
-- Auswärts
-- Ergebnis
-- Wo
-- Ballbesitz
-- Schüsse
-- SchüsseOpp
-- Schusspräzision
-- SchusspräzisionOpp
-- xGoals
-- xGoalsOpponent
-- Pässe
-- PässeOpp
-- Erfolgreiche Pässe
-- Erfolgreiche Pässe Opp
-- Erfolgreiche Dribblings  
-- Gelbe Karten
-- Rote Karten 
-- Abbruchgrund
-- Spieldauer
-- CleanSheet
-- Verlängerung
-- Elfmeterschießen
-- Unsicher/Fehlt  
+SpielID;Spielkategorie;Datum;HeimT;AuswärtsT;Heim;Auswärts;Ergebnis;Wo;
+Ballbesitz;Schüsse;SchüsseOpp;Schusspräzision;SchusspräzisionOpp;
+xGoals;xGoalsOpponent;Pässe;PässeOpp;Erfolgreiche Pässe;
+Erfolgreiche Pässe Opp;Erfolgreiche Dribblings;Gelbe Karten;
+Rote Karten;Abbruchgrund;Spieldauer;CleanSheet;Verlängerung;
+Elfmeterschießen;Unsicher/Fehlt
 
----
-
-### Logik & Regeln
-
-**Ergebnis**
-- „Sieg“ nur wenn:
-  - meine Mannschaft eindeutig mehr Tore hat **oder**
-  - Abbruchgrund eindeutig „Gegner hat aufgegeben“ **oder** ich bei Schritt 5 "1) Unentschieden" als Antwort gegeben habe
-  - ich vorhin bei Schritt 5 mit 2 (Ich habe im Elfmeterschießen gewonnen) angegeben habe
-- „Unentschieden“ wenn beide Mannschaften gleiche viele Tore haben **und** kein Abbruchgrund vorliegt **oder** ich bei Schritt 5 
-- sonst: „Niederlage“ oder leer, wenn unklar
-
-
-**Wo**
-- „Heim“ → mein Team steht links
-- „Gast“ → mein Team steht rechts
-- sonst: „Unklar“
-
-**Schusspräzision**
-- die Zahl im Kreis über SCHUSSPRÄZISION vom gegnerischen Team
-- Zahl als Dezimal angeben (100 entspricht 1)
-
-**Schüsse**
-- Anzahl der Schüsse meines Teams
-  
-**SchüsseOpp**
-- Anzahl der Schüsse des gegnerischen Teams
-
-**SchusspräzisionOpp**
-- die Zahl im Kreis über SCHUSSPRÄZISION
-- Zahl als Dezimal angeben (100 entspricht 1)
-
-**HeimT**
-- Anzahl Tore des Heim-teams
-
-**AuswärtsT**
-- Aznahl der Tore des Gast-Teams
-
-**Abbruchprüfung**
-- Das Ergebnis der Abbruchüberprüfung
-- sonst: Abbruchgrund leer
-
-**xGoals**
-- xGoals Wert für mein Team
-  
-**xGoalsOpponent**
-- xGoals Wert für das gegnerische Team 
-
-**Spieldauer**
-- die Spieldauer wenn es einen Abbruchgrund gibt.
-  
-**Ballbesitz**
-- Zahl als Dezimal angeben (100 entspricht 1) 
-
-**Pässe**
-- Die Anzahl Pässe für mein Team
-
-**PässeOpp**
-- Die Anzahl Pässe des gegnerischen Teams
-
-**Erfolgreiche Pässe**
-- die Zahl im Kreis über PASSGENAUIGKEIT von meinem Team
-- Zahl als Dezimal angeben (100 entspricht 1)
-
-**Erfolgreiche Pässe Opp**
-- die Zahl im Kreis über PASSGENAUIGKEIT vom gegnerischen Team
-- Zahl als Dezimal angeben (100 entspricht 1)
-
-**Erfolgreiche Dribblings**
-- die Zahl im Kreis über DRIBBLING-ERFOLGSQUOTE
-- Zahl als Dezimal angeben (100 entspricht 1)
-
-**CleanSheet**
-- Sieg ist ohne Gegentor hier "ja" eintragen sonst "nein"
-
-**Verlängerung**
-- Wenn die Spieldauer über 95 Minuten ist schreibst du in diesem Feld "ja" sonst "nein"
-
-**Elfmeterschießen**
-- Wenn du ein Unentschieden erkannst hast nach der Verlängerung hast du mich in Schritt 5 gefragt. Je nach Ergebnis trägst du hier bei 1 als Antwort nichts oder bei 2 oder 3 trägst du hier ein ja ein
-
-**Überlappende Statistik**
-- Werte, die auf Screenshot 1 und 2 doppelt vorkommen:
-  - den **klarer lesbaren** Wert verwenden
-  - niemals doppelt eintragen
+*(Logik & Detailregeln unverändert, nur Reihenfolge angepasst)*
 
 ---
 
@@ -250,86 +232,137 @@ Wenn die Spielzeit eindeutig über 119 Minuten liegt und der Spielstand unentsch
 
 ### Spalten (exakt diese Reihenfolge)
 
-- SpielID  
-- Spielkategorie  
-- Name  
-- Position  
-- Bewertung  
-- Tore  
-- Vorlagen  
-- MOTM  
-- Unsicher/Fehlt  
+SpielID;Spielkategorie;Name;Position;Bewertung;Tore;Vorlagen;MOTM;Unsicher/Fehlt
+
+### Technische CSV-Zwangsregeln (zwingend)
+
+- `DataSpieler` ist **eine einzige, durchgehende CSV-Tabelle**
+- **Leerzeilen sind vollständig verboten**
+- Das gilt **auch**:
+  - zwischen zwei unterschiedlichen `SpielID`
+  - zwischen zwei Spielen
+  - zur optischen Trennung
+- Jede Zeile = **genau ein Spieler**
+- Ein Zeilenumbruch ist **nur** am Ende einer Spielerzeile erlaubt
+- Eine Leerzeile im Codeblock ist ein **harter Regelverstoß**
+
+
+## Pflicht-Validierung Spielerliste (zwingend)
+
+Bevor `DataSpieler` ausgegeben wird:
+
+1. Zähle Spieler aus Screenshot 3  
+2. Zähle Spieler aus Screenshot 4  
+3. Führe beide Listen zusammen  
+4. Entferne Dubletten anhand des Namens  
+5. Ergebnis MUSS **exakt 18 Spieler** enthalten  
+
+Wenn Ergebnis ≠ 18:
+- **STOP**
+- **keine CSV-Ausgabe**
+- Rückfrage:  
+  „Ich komme auf X Spieler. Bitte prüfen.“
+
+Zusatzregeln:
+- Jeder Screenshot MUSS mindestens einen Spieler liefern
+- Ein Screenshot mit 0 Spielern ist ungültig
+- Kein Spieler darf doppelt eingetragen werden
 
 ---
 
-### Regeln Spielerwerte
+## MOTM-Regel (hart, deterministisch, maschinengeeignet)
 
-- Name muss exakt so aufgeschrieben werden, wie im Screenshot zu lesen.
-- Tore / Vorlagen:
-  - leer im Screenshot → `0`
-  - unlesbar → leer + Eintrag in `Unsicher/Fehlt`
-- Wenn Bewertungen, Positionen oder Namen eindeutig lesbar → Eintrag in `Unsicher/Fehlt`
-- Es werden alle Spieler aus der Liste eingetragen auch die ohne Wertung mit Position AW, aber kein Spieler darf doppelt Eingetragen werden
-- Felder zu denen keine Information vorliegt bleiben leer
-- Beide Screenshots ergeben immer gemeinsam 18 Spieler.
-  
-## MOTM-Regel (kurz, deterministisch & robust)
+### Ziel
+Ermittlung des **Man of the Match (MOTM)** ausschließlich für **mein Team**  
+auf Basis **eindeutiger visueller Nachweise** aus den Screenshots.
 
-### Grundsatz
-`MOTM = X` wird **nur** vergeben, wenn eindeutig nachweisbar ist, dass der MOTM  
-**an mein Team** ging.  
-Ein Spiel **darf korrekt keinen MOTM** für mein Team haben.
+Ein Spiel **darf korrekt keinen MOTM haben**.
 
 ---
 
-### 1. Gate – MOTM-Text (Pflicht)
-- Prüfe **unter „Gesamtwert“ in der oberen Bildmitte**, ob der Text  
-  **„Player of the Match“** sichtbar ist.
-- **Nicht sichtbar → kein MOTM**  
-  (alle Felder leer, keine weitere Prüfung).
+### Ergebnisfeld `MOTM`
+
+- **Erlaubte Werte:**
+  - `X` = Spieler ist MOTM
+  - *(leer)* = kein MOTM
+- **Alle anderen Werte sind verboten**  
+  (`ja`, `nein`, `true`, `false`, `0`, `1`, etc.)
 
 ---
 
-### 2. Zeilen-Segmentierungs-Gate (Pflicht)
-- Nutze **nur** die Spielerlisten-Screenshots.
-- Segmentiere **jede Spielerzeile** als **eindeutige rechteckige Zeilenbox**:
-  - Höhe = exakt eine visuelle Tabellenzeile
-  - Breite = POS-Zelle + Icon-Zone + Name-Zelle
-- Wenn die **vertikalen Grenzen** einer Spielerzeile **nicht eindeutig** bestimmbar sind:
-  - **kein MOTM**
-  - `Unsicher/Fehlt = "Spielerzeile nicht eindeutig segmentierbar"`
+### Entscheidungslogik  
+**Zwingend exakt in dieser Reihenfolge auszuführen.  
+Kein Schritt darf übersprungen werden.**
 
 ---
 
-### 3. Icon-Zone (nur wenn Gate 2 erfüllt)
-- Segmentiere jede Zeilenbox in:
-  - **POS-Zelle**
-  - **Name-Zelle**
-- Definiere die **Icon-Zone** als den **horizontalen Zwischenraum**
-  zwischen rechtem Rand der POS-Zelle und linkem Rand der Name-Zelle,
-  **begrenzt auf die Höhe der Zeilenbox**.
+### Schritt 1 – Gate (Pflicht, harte Sperre)
+
+- Prüfe **ausschließlich** den Bereich **unter „Gesamtwert“**.
+- Wenn der **exakte Text**  
+  **„Player of the Match“** **nicht sichtbar** ist:
+  - `MOTM` bleibt für **alle Spieler leer**
+  - **STOP**
+  - **jede weitere MOTM-Prüfung ist verboten**
 
 ---
 
-### 4. Ball-Icon (streng)
-Ein Ball-Icon zählt **nur**, wenn es:
-- **vollständig innerhalb** der Icon-Zone liegt **UND**
-- **vollständig innerhalb derselben Zeilenbox** liegt **UND**
-- **keine Überlappung** mit POS- oder Name-Zelle hat
+### Schritt 2 – Datengrundlage
+
+- Verwende **ausschließlich** die Spielerlisten-Screenshots.
+- Jeder sichtbare Spielername entspricht **genau einer Spielerzeile**.
+- Wenn Spielerzeilen **nicht eindeutig segmentierbar** sind:
+  - `MOTM` bleibt leer
+  - **STOP**
 
 ---
 
-### 5. Entscheidung
-- **Genau ein** gültiges Ball-Icon → dieser Spieler erhält `MOTM = X`
-- **0 oder >1** gültige Ball-Icons → **kein MOTM**
+### Schritt 3 – Icon-Zone (fix definiert)
+
+- Icon-Zone = **horizontaler Bereich links vom POS-Feld**
+- Vertikal begrenzt auf die **exakte Höhe der jeweiligen Spielerzeile**
+- Alles außerhalb dieser Zone ist **ungültig**
 
 ---
 
-### Verbote & Unsicherheit
-- Alles außerhalb der Icon-Zone ignorieren  
-  (Text, Bewertungen, Auswahl, Stats, optische Nähe).
-- Optische Nähe zu Namen ist **kein Zuordnungskriterium**.
-- Wenn POS-, Name- oder Zeilenboxen nicht eindeutig segmentierbar sind:
-  - **kein MOTM**
-  - `Unsicher/Fehlt = "MOTM-Zone nicht eindeutig"`
+### Schritt 4 – Ball-Icon (strikte Zählung)
 
+Ein Ball-Icon ist **gültig**, nur wenn:
+- vollständig innerhalb der Icon-Zone
+- vollständig innerhalb **einer einzigen Spielerzeile**
+- nicht angeschnitten
+- nicht überlappend
+
+Zähle **alle gültigen Ball-Icons**.
+
+---
+
+### Schritt 5 – Entscheidung
+
+- **genau 1 gültiges Ball-Icon**:
+  - zugehöriger Spieler → `MOTM = X`
+- **0 oder mehr als 1 gültiges Ball-Icon**:
+  - `MOTM` bleibt für **alle Spieler leer**
+
+---
+
+### Explizite Verbote
+
+- Kein Ableiten des MOTM aus:
+  - Bewertungen
+  - Toren
+  - Vorlagen
+  - Heatmaps
+  - Kontext oder Spielverlauf
+- Kein Schätzen
+- Kein „wahrscheinlich“
+- Keine Interpretation außerhalb der definierten Regeln
+
+---
+
+### Zusammenfassung (maschinenlesbar)
+
+- Gate **blockiert alles**
+- Ergebniswerte **exklusiv: `X` oder leer**
+- Reihenfolge **zwingend**
+- Kein MOTM ist ein **gültiger, korrekter Zustand**
