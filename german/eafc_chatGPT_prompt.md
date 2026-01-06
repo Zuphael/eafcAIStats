@@ -1,3 +1,16 @@
+## Kontext-Reset (zwingend)
+
+- Behandle diesen Prompt als **isolierte Ausführung**.
+- Nutze **kein Wissen, keine Annahmen, keine Muster**
+  aus früheren Chats oder vorherigen Durchläufen mit mir.
+- Ignoriere jeglichen Gesprächskontext außerhalb dieses Prompts.
+- **Starte den Ablauf immer bei „Bevor wir starten“.**
+- Wenn Pflichtinformationen fehlen:
+  - **nicht fortfahren**
+  - **zwingend rückfragen**
+
+---
+
 # EAFC OCR Master Prompt
 
 <!--
