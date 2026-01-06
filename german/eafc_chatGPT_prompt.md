@@ -80,6 +80,15 @@ Wenn Spielzeit eindeutig < 90 Minuten:
     1) Gegner hat aufgegeben (Sieg)  
     2) Ich habe aufgegeben (Niederlage)
     3) Verbindungsproblem (Niederlage)
+
+### Schritt 5 - Elfmeterschießen
+Wenn die Spielzeit eindeutig über 119 Minuten liegt und der Spielstand unentschieden ist:
+   - frage mich danach wie das Spiel nach der Verlängerung ausgegangen ist
+     1) Unentschieden
+     2) Ich habe im Elfmeterschießen gewonnen
+     3) Gegner hat im Elfmeterschießen gewonnen
+    
+     Das Ergebnis merkst du dir für die Tabelle DataSpiel
     
 ---
 
@@ -133,6 +142,7 @@ Wenn Spielzeit eindeutig < 90 Minuten:
 - Spieldauer
 - CleanSheet
 - Verlängerung
+- Elfmeterschießen
 - Unsicher/Fehlt  
 
 ---
@@ -142,8 +152,9 @@ Wenn Spielzeit eindeutig < 90 Minuten:
 **Ergebnis**
 - „Sieg“ nur wenn:
   - meine Mannschaft eindeutig mehr Tore hat **oder**
-  - Abbruchgrund eindeutig „Gegner hat aufgegeben“
-- „Unentschieden“ wenn beide Mannschaften gleiche viele Tore haben **und** kein Abbruchgrund vorliegt
+  - Abbruchgrund eindeutig „Gegner hat aufgegeben“ **oder** ich bei Schritt 5 "1) Unentschieden" als Antwort gegeben habe
+  - ich vorhin bei Schritt 5 mit 2 (Ich habe im Elfmeterschießen gewonnen) angegeben habe
+- „Unentschieden“ wenn beide Mannschaften gleiche viele Tore haben **und** kein Abbruchgrund vorliegt **oder** ich bei Schritt 5 
 - sonst: „Niederlage“ oder leer, wenn unklar
 
 
@@ -212,6 +223,9 @@ Wenn Spielzeit eindeutig < 90 Minuten:
 **Verlängerung**
 - Wenn die Spieldauer über 95 Minuten ist schreibst du in diesem Feld "ja" sonst "nein"
 
+**Elfmeterschießen**
+- Wenn du ein Unentschieden erkannst hast nach der Verlängerung hast du mich in Schritt 5 gefragt. Je nach Ergebnis trägst du hier bei 1 als Antwort nichts oder bei 2 oder 3 trägst du hier ein ja ein
+
 **Überlappende Statistik**
 - Werte, die auf Screenshot 1 und 2 doppelt vorkommen:
   - den **klarer lesbaren** Wert verwenden
@@ -246,15 +260,63 @@ Wenn Spielzeit eindeutig < 90 Minuten:
 - Felder zu denen keine Information vorliegt bleiben leer
 - Beide Screenshots ergeben immer gemeinsam 18 Spieler.
   
-### MOTM – Zwingende Regel (keine Ausnahmen)
+## MOTM-Regel (kurz, deterministisch & robust)
 
-- MOTM darf **ausschließlich** vergeben werden, wenn:
-  - **genau ein Ball-Icon sichtbar ist**
-  - das Ball-Icon **direkt in der Spielerlisten-Spalte zwischen POS und Name steht**
-- **Nur dieser Spieler erhält ein `X` im Feld MOTM**
-- Alle anderen Spieler haben das MOTM-Feld **leer**, selbst wenn:
-  - der Text „Player of the Match“ an anderer Stelle angezeigt wird
-  - mehrere Spieleransichten existieren
-- **Keine Plausibilisierung, kein Abgleich, keine Korrektur**
+### Grundsatz
+`MOTM = X` wird **nur** vergeben, wenn eindeutig nachweisbar ist, dass der MOTM  
+**an mein Team** ging.  
+Ein Spiel **darf korrekt keinen MOTM** für mein Team haben.
 
+---
+
+### 1. Gate – MOTM-Text (Pflicht)
+- Prüfe **unter „Gesamtwert“ in der oberen Bildmitte**, ob der Text  
+  **„Player of the Match“** sichtbar ist.
+- **Nicht sichtbar → kein MOTM**  
+  (alle Felder leer, keine weitere Prüfung).
+
+---
+
+### 2. Zeilen-Segmentierungs-Gate (Pflicht)
+- Nutze **nur** die Spielerlisten-Screenshots.
+- Segmentiere **jede Spielerzeile** als **eindeutige rechteckige Zeilenbox**:
+  - Höhe = exakt eine visuelle Tabellenzeile
+  - Breite = POS-Zelle + Icon-Zone + Name-Zelle
+- Wenn die **vertikalen Grenzen** einer Spielerzeile **nicht eindeutig** bestimmbar sind:
+  - **kein MOTM**
+  - `Unsicher/Fehlt = "Spielerzeile nicht eindeutig segmentierbar"`
+
+---
+
+### 3. Icon-Zone (nur wenn Gate 2 erfüllt)
+- Segmentiere jede Zeilenbox in:
+  - **POS-Zelle**
+  - **Name-Zelle**
+- Definiere die **Icon-Zone** als den **horizontalen Zwischenraum**
+  zwischen rechtem Rand der POS-Zelle und linkem Rand der Name-Zelle,
+  **begrenzt auf die Höhe der Zeilenbox**.
+
+---
+
+### 4. Ball-Icon (streng)
+Ein Ball-Icon zählt **nur**, wenn es:
+- **vollständig innerhalb** der Icon-Zone liegt **UND**
+- **vollständig innerhalb derselben Zeilenbox** liegt **UND**
+- **keine Überlappung** mit POS- oder Name-Zelle hat
+
+---
+
+### 5. Entscheidung
+- **Genau ein** gültiges Ball-Icon → dieser Spieler erhält `MOTM = X`
+- **0 oder >1** gültige Ball-Icons → **kein MOTM**
+
+---
+
+### Verbote & Unsicherheit
+- Alles außerhalb der Icon-Zone ignorieren  
+  (Text, Bewertungen, Auswahl, Stats, optische Nähe).
+- Optische Nähe zu Namen ist **kein Zuordnungskriterium**.
+- Wenn POS-, Name- oder Zeilenboxen nicht eindeutig segmentierbar sind:
+  - **kein MOTM**
+  - `Unsicher/Fehlt = "MOTM-Zone nicht eindeutig"`
 
