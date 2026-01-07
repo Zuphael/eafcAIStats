@@ -269,100 +269,52 @@ Zusatzregeln:
 - Kein Spieler darf doppelt eingetragen werden
 
 ---
+## MOTM-Regel (korrigiert – inkl. Duplikat-Logik)
 
-## MOTM-Regel (hart, deterministisch, maschinengeeignet)
-
-### Ziel
-Ermittlung des **Man of the Match (MOTM)** ausschließlich für **mein Team**  
-auf Basis **eindeutiger visueller Nachweise** aus den Screenshots.
-
-Ein Spiel **darf korrekt keinen MOTM haben**.
+### Ergebnis
+- `MOTM = X` oder leer  
+- andere Werte verboten
 
 ---
 
-### Ergebnisfeld `MOTM`
-
-- **Erlaubte Werte:**
-  - `X` = Spieler ist MOTM
-  - *(leer)* = kein MOTM
-- **Alle anderen Werte sind verboten**  
-  (`ja`, `nein`, `true`, `false`, `0`, `1`, etc.)
-
----
-
-### Entscheidungslogik  
-**Zwingend exakt in dieser Reihenfolge auszuführen.  
-Kein Schritt darf übersprungen werden.**
-
----
-
-### Schritt 1 – Gate (Pflicht, harte Sperre)
-
-- Prüfe **ausschließlich** den Bereich **unter „Gesamtwert“**.
-- Wenn der **exakte Text**  
-  **„Player of the Match“** **nicht sichtbar** ist:
-  - `MOTM` bleibt für **alle Spieler leer**
-  - **STOP**
-  - **jede weitere MOTM-Prüfung ist verboten**
-
----
-
-### Schritt 2 – Datengrundlage
-
-- Verwende **ausschließlich** die Spielerlisten-Screenshots.
-- Jeder sichtbare Spielername entspricht **genau einer Spielerzeile**.
-- Wenn Spielerzeilen **nicht eindeutig segmentierbar** sind:
-  - `MOTM` bleibt leer
+### Gate
+- Wenn der Text **„Player of the Match“** unter **„Gesamtwert“** nicht sichtbar ist:
+  - `MOTM` bleibt für alle Spieler leer
   - **STOP**
 
 ---
 
-### Schritt 3 – Icon-Zone (fix definiert)
+### Datengrundlage
+- Es werden **ausschließlich** die beiden Spielerlisten-Screenshots (Screenshot 3 und 4) verwendet
+- Jede sichtbare Zeile = genau ein Spieler
+- Spieler werden **über den Namen identifiziert**
 
-- Icon-Zone = **horizontaler Bereich links vom POS-Feld**
-- Vertikal begrenzt auf die **exakte Höhe der jeweiligen Spielerzeile**
-- Alles außerhalb dieser Zone ist **ungültig**
+---
+### Icon-Zone 
+- **Horizontal zwischen rechtem Rand des POS-Feldes und linkem Rand des Spielernamens**
+- - Vertikal exakt auf die Höhe der Spielerzeile begrenzt
+---
+
+### Gültiges Ball-Icon
+- rundes, schwarz-weißes Fußball-Symbol
+- vollständig innerhalb **einer** Spielerzeile
+- vollständig innerhalb der definierten Icon-Zone
+- keine UI-Marker, Pfeile oder Effekte
 
 ---
 
-### Schritt 4 – Ball-Icon (strikte Zählung)
-
-Ein Ball-Icon ist **gültig**, nur wenn:
-- vollständig innerhalb der Icon-Zone
-- vollständig innerhalb **einer einzigen Spielerzeile**
-- nicht angeschnitten
-- nicht überlappend
-
-Zähle **alle gültigen Ball-Icons**.
+### Duplikat-Regel (zwingend)
+- Wird **derselbe Spielername** mit **gültigem Ball-Icon**  
+  sowohl in Screenshot 3 **als auch** in Screenshot 4 erkannt,
+  zählt dies als **genau 1 gültiges Ball-Icon** (Duplikat).
+- Ball-Icons unterschiedlicher Spielernamen werden **nicht** zusammengeführt.
 
 ---
 
-### Schritt 5 – Entscheidung
+### Entscheidung
+- **genau 1 gültiges Ball-Icon (nach Duplikat-Bereinigung)**  
+  → zugehöriger Spieler erhält `MOTM = X`
+- **0 oder >1** gültige Ball-Icons  
+  → `MOTM` bleibt leer
 
-- **genau 1 gültiges Ball-Icon**:
-  - zugehöriger Spieler → `MOTM = X`
-- **0 oder mehr als 1 gültiges Ball-Icon**:
-  - `MOTM` bleibt für **alle Spieler leer**
 
----
-
-### Explizite Verbote
-
-- Kein Ableiten des MOTM aus:
-  - Bewertungen
-  - Toren
-  - Vorlagen
-  - Heatmaps
-  - Kontext oder Spielverlauf
-- Kein Schätzen
-- Kein „wahrscheinlich“
-- Keine Interpretation außerhalb der definierten Regeln
-
----
-
-### Zusammenfassung (maschinenlesbar)
-
-- Gate **blockiert alles**
-- Ergebniswerte **exklusiv: `X` oder leer**
-- Reihenfolge **zwingend**
-- Kein MOTM ist ein **gültiger, korrekter Zustand**
