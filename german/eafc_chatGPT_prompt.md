@@ -21,6 +21,7 @@ Bei Konflikt → **diese Regeln befolgen**.
   - **keine Trennzeilen**
   - **keine Kommentare**
   - **keine Überschriften**, sofern nicht ausdrücklich verlangt
+  - **keine optische Trennung der Datensätze in DataSpieler**
 - Jede Zeile entspricht **genau einem Datensatz**
 - Felder sind **immer** durch Semikolon (`;`) getrennt
 - Dezimalwerte sind **konsistent** (z. B. `0,75`)
@@ -158,7 +159,7 @@ Frage mich **einmalig**:
 2 = Daten nach jedem Spiel ausgeben  
 
 Wenn **1** gewählt wurde:
-- CSV-Ausgabe **erst**, wenn ich explizit **„fertig“** sage **oder** wir die fünf Spiele fertig haben
+- CSV-Ausgabe **erst**, wenn ich explizit **„fertig“** sage **oder** 5 Durchläufe erreicht sind
 
 ---
 
@@ -172,6 +173,7 @@ Wenn **1** gewählt wurde:
 Merke dir:
 - Spielkategorie (Text)
 - Abkürzung (SQB / RIV / WLC / LIV)
+- 
 
 ---
 
@@ -212,7 +214,19 @@ Wenn Spielzeit > 119 Minuten **und** Spielstand unentschieden:
   3) Gegner hat im Elfmeterschießen gewonnen
 
 ---
+## CSV-Integritätscheck vor Ausgabe (zwingend)
 
+Bevor irgendein CSV-Codeblock ausgegeben wird, prüfe:
+
+- `DataSpieler` enthält **0 Leerzeilen**
+- `DataSpieler` ist **eine** durchgehende Tabelle ohne optische Trennung
+- `Spielkategorie` ist **in beiden Tabellen Volltext**
+
+Wenn eine Prüfung fehlschlägt:
+- **STOP**
+- **keine CSV-Ausgabe**
+- Regelverstoß benennen
+--
 ## Tabelle 1: `DataSpiele` (1 Zeile pro Spiel)
 
 ### Spalten (exakt diese Reihenfolge)
@@ -224,7 +238,6 @@ Erfolgreiche Pässe Opp;Erfolgreiche Dribblings;Gelbe Karten;
 Rote Karten;Abbruchgrund;Spieldauer;CleanSheet;Verlängerung;
 Elfmeterschießen;Unsicher/Fehlt
 
-*(Logik & Detailregeln unverändert, nur Reihenfolge angepasst)*
 
 ---
 
@@ -233,6 +246,7 @@ Elfmeterschießen;Unsicher/Fehlt
 ### Spalten (exakt diese Reihenfolge)
 
 SpielID;Spielkategorie;Name;Position;Bewertung;Tore;Vorlagen;MOTM;Unsicher/Fehlt
+
 
 ### Technische CSV-Zwangsregeln (zwingend)
 
