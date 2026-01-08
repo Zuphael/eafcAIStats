@@ -238,85 +238,6 @@ Erfolgreiche Pässe Opp;Erfolgreiche Dribblings;Gelbe Karten;
 Rote Karten;Abbruchgrund;Spieldauer;CleanSheet;Verlängerung;
 Elfmeterschießen;Unsicher/Fehlt
 
-### Logik & Regeln 
-# Spielauswertung – komprimierte Regeln
-
-## 1. Ergebnislogik (zentral)
-
-**Sieg**, wenn **mindestens eine** Bedingung erfüllt ist:
-- Mein Team hat **mehr Tore**
-- Abbruchgrund = **„Gegner hat aufgegeben“**
-- Schritt 5 → Antwort **1 (Unentschieden)**
-- Schritt 5 → Antwort **2 (Sieg im Elfmeterschießen)**
-
-**Unentschieden**, wenn:
-- **Gleiche Toranzahl**
-- **kein Abbruchgrund**
-- **kein Elfmeterschießen-Sieg**
-
-**Sonst:**
-- **Niederlage** oder **leer**, wenn unklar
-
----
-
-## 2. Spielort (Wo)
-
-- **Heim** → mein Team steht **links**
-- **Gast** → mein Team steht **rechts**
-- sonst → **Unklar**
-
----
-
-## 3. Statistikregeln (einheitlich)
-
-**Grundsatz Prozentwerte:**  
-Zahl im Kreis → **Dezimalwert**  
-(100 = 1 · 75 = 0,75)
-
-### Mein Team
-- **Schüsse** → Anzahl Schüsse
-- **Schusspräzision** → Kreiswert über *SCHUSSPRÄZISION*
-- **xGoals**
-- **Ballbesitz**
-- **Pässe**
-- **Erfolgreiche Pässe** → Kreiswert über *PASSGENAUIGKEIT*
-- **Erfolgreiche Dribblings** → Kreiswert über *DRIBBLING-ERFOLGSQUOTE*
-
-### Gegner
-- **SchüsseOpp**
-- **SchusspräzisionOpp**
-- **xGoalsOpponent**
-- **PässeOpp**
-- **Erfolgreiche Pässe Opp**
-
----
-
-## 4. Tore
-
-- **HeimT** → Tore Heimteam
-- **AuswärtsT** → Tore Gastteam
-
----
-
-## 5. Abbruch & Sonderfälle
-
-- **Abbruchprüfung** → Ergebnis der Abbruchüberprüfung  
-  → sonst **leer**
-- **Spieldauer** → nur ausfüllen, wenn Abbruch vorliegt
-- **Verlängerung** → `ja`, wenn **Spieldauer > 95 Minuten**, sonst `nein`
-- **Elfmeterschießen**
-  - nur relevant nach Verlängerung + Unentschieden
-  - Schritt 5:
-    - Antwort 1 → leer
-    - Antwort 2 oder 3 → `ja`
-
----
-
-## 6. Ableitungen
-
-- **CleanSheet**
-  - `ja`, wenn **Sieg ohne Gegentor**
-  - sonst `nein`
 # Spielauswertung – komprimierte Regeln
 
 ## 1. Ergebnislogik (zentral)
@@ -468,7 +389,7 @@ Zusatzregeln:
 ---
 
 ### Gültiges Ball-Icon
-- rundes, schwarz-weißes Fußball-Symbol
+- rundes, schwarz-weißes Fußball-Symbol oder Gelbes Kreis-Icon mit ⚽-Struktur zählt
 - vollständig innerhalb **einer** Spielerzeile
 - vollständig innerhalb der definierten Icon-Zone
 - keine UI-Marker, Pfeile oder Effekte
