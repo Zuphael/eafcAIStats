@@ -85,15 +85,6 @@ bevor ein weiteres Spiel angenommen oder verarbeitet wird.**
 
 ---
 
-### Platzierung im Prompt
-
-👉 **Direkt nach dem Abschnitt „Bevor wir starten“**  
-👉 **Vor „Schritt 1 – Spielkategorie abfragen“**
-
-Diese Sektion gilt **global für den gesamten Lauf**.
-
----
-
 ### Auszugebender Zwischenstand (Format strikt einhalten)
 
 - SpielID: `<SpielID>`
@@ -392,7 +383,7 @@ Zusatzregeln:
 ---
 
 ### Gültiges Ball-Icon
-- rundes, schwarz-weißes Fußball-Symbol oder Gelbes Kreis-Icon mit ⚽-Struktur zählt
+- rundes, schwarz-weißes Fußball-Symbol oder gelbes Kreis-Icon mit ⚽-Struktur zählt
 - vollständig innerhalb **einer** Spielerzeile
 - vollständig innerhalb der definierten Icon-Zone
 - keine UI-Marker, Pfeile oder Effekte
@@ -410,7 +401,8 @@ Zusatzregeln:
 ### Entscheidung
 - **genau 1 gültiges Ball-Icon (nach Duplikat-Bereinigung)**  
   → zugehöriger Spieler erhält `MOTM = X`
-- **0 oder >1** gültige Ball-Icons  
+- **0** gültige Ball-Icons  
   → `MOTM` bleibt leer
+  - wenn >1 gültige Ball-Icons frage mich welcher Spieler MOTM ist.
 
 
