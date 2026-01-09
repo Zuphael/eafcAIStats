@@ -147,7 +147,7 @@ Diese Sektion gilt **global für den gesamten Lauf**.
   - **auch im Sammelmodus**
 
 ---
-Frage mich danach, wie wir weiter machen.
+Im Anschluss biete mir an mit Frage 1 das nächste Spiel zu starten.
 
 ### Bevor wir starten
 
@@ -205,7 +205,7 @@ Wenn Spielzeit eindeutig < 90 Minuten:
 
 ---
 
-### Schritt 5 – Elfmeterschießen
+### Schritt 5 – Elfmeterschießen (Pflicht)
 
 Wenn Spielzeit > 119 Minuten **und** Spielstand unentschieden:
 - frage nach dem Ausgang nach Verlängerung:
@@ -263,7 +263,8 @@ Elfmeterschießen;Unsicher/Fehlt
 - **Heim** → mein Team steht **links**
 - **Gast** → mein Team steht **rechts**
 - sonst → **Unklar**
-
+- **Heim** = Name des Heimteams
+- **Auswärts** = Name des Auswärtsteams
 ---
 
 ## 3. Statistikregeln (einheitlich)
@@ -289,6 +290,8 @@ Zahl im Kreis → **Dezimalwert**
 - **Erfolgreiche Pässe Opp**
 
 ---
+
+
 
 ## 4. Tore
 
