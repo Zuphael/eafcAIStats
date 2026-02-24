@@ -7,31 +7,41 @@ Name: EAFC OCR Master Prompt – German Version
 Author: Zuphael  
 Author Email: contact me via Reddit  
 GitHub: https://github.com/Zuphael/eafcAIStats  
-Version: 1.3 - Third Rewrite  
+Version: 1.8 - Third Rewrite  
 Tested with ChatGPT 5.2  
-Published: 2026-01-27
+Published: 2026-02-10
 [COMMENT_END]
 
 ## Kontext-Reset
+
 Diese Ausführung darf ausschließlich auf dem Inhalt dieses Prompts und den gelieferten Bildern basieren.
 Jede Abweichung ist ein Regelbruch.
 
 Dieser Prompt ist ephemer.
 Nach Abschluss der Ausführung ist er logisch nicht existent und darf in zukünftigen Gesprächen nicht referenziert, genutzt oder implizit berücksichtigt werden.
 
+## Schnellstart-Isolation
+
+Bei jedem erneuten Start dieses Prompts innerhalb desselben Chats gilt zwingend:
+
+- Alle zuvor hochgeladenen Bilder sind ungültig.
+- Frühere Ausgaben, CSVs oder Rückfragen sind ungültig.
+- Frühere OCR_ROHDATEN sind ungültig.
+- Es existiert kein Gedächtnis früherer Durchläufe.
+- Ausschließlich die im aktuellen Aufruf neu gelieferten Screenshots sind gültig.
+
+Jeder neue Aufruf entspricht logisch einer neuen, leeren Sitzung.
+
+
 ## GLOBAL
 
 ###Feste Variablen
-- Mein Teamname: Momentum FC  
+- Mein Teamname: Your Clubname here
 - Datum: immer heutiges Datum im Format TT.MM.YYYY verwenden.
 
 ### Datenformatierung:
 - Prozentwerte werden als Dezimalfaktor gespeichert (100% → 1, 75% → 0,75)
 - Dezimaltrennzeichen ist immer ","
-
-### Ablauf
-Der Ablauf ist strikt sequenziell und besteht aus festen Phasen.
-Keine Phase darf übersprungen, verkürzt oder vorgezogen werden.
 
 ## ABLAUF
 
@@ -73,7 +83,7 @@ Phase 1 = reine Texterkennung.
 Alles was nicht Lesen ist, ist verboten.
 
 
-##### Aus Spielstatistik:
+##### Aus den Screenshots Spielstatistik:
 - Spielstand
 - Spielzeit
 - Teamnamen (links / rechts)
@@ -91,104 +101,89 @@ Alles was nicht Lesen ist, ist verboten.
   - usw.
 
 
-##### Aus Spielerstatistik (ERSATZ – vollständig gehärtete Version)
+##### Aus den Screenshots Spielerstatistik
 
-###### MOTM-Existenz-Gate (Text, nur Existenz – keine Zuordnung)
+Die OCR Verarbeitung der beiden Screenshots zur Spielerstatistik erfolgt in zwei Schritten.
 
-Suchraum ausschließlich:
-- x: 36–55 % Bildbreite
-- y: 18–28 % Bildhöhe
+1. Schritt Tabellen OCR
+2. Erkennung des Player of the Match (POTM)
 
-Regel:
-Wenn im Suchraum der Text „Gesamtwert“ vorkommt
-und direkt darunter (≤ 1 Textzeilenhöhe)
-der Text „Player of the Match“ steht:
+###### Schritt 1 – Tabellen-OCR
+Aus linker Tabelle pro Zeile lesen:
+- POS  
+- Name  
+- Bewertung (RB oder „N.V.“)  
+- Tore  
+- Vorlagen  
 
-OCR_ROHDATEN.meta.gesamtwert_text = "Player of the Match"
+Regeln:
+- Exakt 12 Zeilen pro Screenshot  
+- Namen exakt wie in der Tabelle angezeigt  
+- Rechter Detailbereich ist KEINE Quelle
 
-sonst:
+###### Schritt 2 – Marker
 
-OCR_ROHDATEN.meta.gesamtwert_text = "nein"
+####### POTM-Gate (Text) – nur Existenz, keine Zuordnung
 
-Wichtig:
-- Dieses Gate zeigt ausschließlich, dass irgendein MOTM existiert.
-- Es trifft keine Aussage, welcher Spieler MOTM ist.
+Setze:
+meta.gesamtwert_text = "Player of the Match"
 
-###### Text-Gate (harte Vorbedingung)
+NUR WENN im selben Screenshot sichtbar:
+- Wort „Gesamtwert“
+- direkt darunter „Player of the Match“
 
-Wenn:
-OCR_ROHDATEN.meta.gesamtwert_text != "Player of the Match"
+Sonst:
+meta.gesamtwert_text = "nein"
 
-dann gilt zwingend:
-ballIcon = "nein" für alle Spieler
+WICHTIGE HÄRTUNG:
 
-- Keine Icon-Erkennung
-- Alle nachfolgenden Ball-Icon-Regeln sind inaktiv
+- Dieses Gate sagt ausschließlich aus, dass ein POTM existiert.
+- Es darf NIEMALS genutzt werden, um den POTM-Spieler zu bestimmen.
+- Der aktuell selektierte Spieler (weiße Hervorhebung) ist KEINE Quelle für POTM.
+- Jegliche Information aus dem rechten Detailbereich ist für POTM-Bestimmung strikt verboten.
 
-###### Verbotene Quellen (absolut)
 
-- Rechter Detailbereich (Portrait, Heatmap, Name groß, Einzelspieler-Stats)
-- Bewertungsring / Gesamtwert
-- Ausgewählte Tabellenzeile
-- UI-Selektion (Highlight)
-- „Player of the Match“ außerhalb des definierten Text-Gates
+###### Erweiterte Ball-Icon-Erkennung (POTM-Icon)
 
-###### Erlaubte Quelle (exklusiv)
+####### Tabellen-Only & Reihen-Scan (Pflicht)
 
-- MOTM-Zuordnung ausschließlich über Icon-Spalte der Tabellenliste
+- Scanne ALLE 12 Tabellenzeilen der linken Spieler-Liste.
+- Setze pro Zeile ballIcon strikt nach Pixel-Merkmal.
+- Der rechte Detailbereich inkl. "Player of the Match", Heatmap, Portrait, Werte-Liste ist IMMER verboten.
+- Der aktuell markierte/selektierte Tabellen-Eintrag ist KEINE POTM-Information.
 
-###### Spieler-OCR (pro Screenshot)
+Erkennung (nur bei aktivem Gate):
 
-Suchraum:
-- x: 0–36 %
-- y: 33–88 %
+ballIcon = "ja" NUR wenn eindeutig sichtbar (Tabellenanker):
 
-Es existieren exakt 12 Tabellenzeilen (Z1–Z12).
+- ein kleines rundes gelb/oranges Symbol
+- INNERHALB des Tabellenbereichs der linken Spieler-Liste
+- das Symbol liegt horizontal auf gleicher Höhe wie genau eine Tabellenzeile
+  (Zeilenmitte ± ca. 1/3 Zeilenhöhe)
+- und es liegt nahe bei dieser Zeile, entweder
+  - direkt links neben der Bewertung (RB)
+  - oder in der POS-Spalte direkt links neben der Positionsangabe
+- eindeutige Zuordnung zu genau EINER Zeile ist zwingend
 
-Pro Tabellenzeile roh lesen:
-- POS
-- Name
-- RB (oder „N.V.“)
-- T
-- VOR
+Blocker → zwingend "nein":
 
-Spielername – harte Regel:
-- Name exakt aus Tabellenzeile
-- Keine Auflösung von Initialen
-- Rechter Detailbereich ist keine Quelle
+- wenn meta.gesamtwert_text = "nein"
+- Icon im rechten Detailbereich
+- Icon im Bereich der Heatmap / Grafik
+- Icon außerhalb der Tabellenfläche
+- Icon nur neben Portrait oder Gesamtwert-Anzeige
+- Symbol nicht eindeutig einer Tabellenzeile zuordenbar
+- mehrere Icons in einer Zeile
+- weiß/graue UI-Markierungen statt gelb/orange
+- unscharf oder teilweise verdeckt
 
-###### ballIcon – Icon-Erkennung
+Kernregel (Maximale Härte):
 
-Icon-Spalte:
-- x: 6,8–9,1 %
-- nur im Suchraum
+Der POTM-Spieler darf ausschließlich über das Tabellen-Icon bestimmt werden.
+Wenn das Icon nicht eindeutig einer Tabellenzeile zuordenbar ist:
+→ ballIcon = "nein".
 
-####### UI-Selektion – ABSOLUTER BLOCKER
 
-Wenn eine Pixelgruppe:
-- ≥ 90 % Zeilenhöhe
-- oder ≥ 60 % ROI-Breite
-- oder Kontakt mit Zeilenrand
-- oder weiß/hellgrau und flächig
-
-Dann:
-ballIcon = "nein"
-
-####### Ball-Icon-Erkennung (nur ohne Blocker)
-
-Eine Pixelgruppe ist Ball-Icon nur wenn:
-1) Höhe ≥ 10 px
-2) Breite ≥ 10 px
-3) In 25–75 % der Zeilenhöhe
-4) Seitenverhältnis 0,5–2,0
-5) Überlappung ≥ 70 %
-
-Wenn erfüllt:
-ballIcon = "ja"
-sonst:
-ballIcon = "nein"
-
-Uneindeutig → ballIcon = "nein"
 	
   
 ###Format für OCR_ROHDATEN
@@ -286,7 +281,15 @@ SpielID:
 SpielID = <Kürzel><dreistellig> (führende Nullen).
 Beispiel: RIV054
 
-Kategorie: ist die Kategorie ohne ABkürzung.
+Kategorie (Ausgabewert in CSV):
+- In der Spalte „Spielkategorie“ wird der ausgeschriebene Kategoriename gespeichert.
+- Die Zahl (1–4) dient ausschließlich der internen Zuordnung und zur Bildung der SpielID.
+
+Mapping für die Ausgabe:
+1 → Squadbattles  
+2 → Rivals  
+3 → Champions  
+4 → Live Event
 
 Solange Spielkategorie oder Spielnummer ungeklärt sind:
 - keine weitere Phase-2-Regel anwenden
@@ -306,6 +309,8 @@ Notiere in der Spalte "Wo" ob mein Team Heim oder Gast ist
 - **Heim** = Name des Team Links
 - **Auswärts** = Name des Team Rechts
 
+- Wenn mein Team Links steht gehören die Werte Rechts zum Gegner
+- Wenn mein Team Rechts steht, gehörten die Werte Links zum Gegner
 
 ##### B) Abbruch (Pflicht bei Spielzeit < 90:00)
 
@@ -320,7 +325,7 @@ Frage:
 Regel:
 - Die Antwort ist verpflichtend.
 - Ohne Antwort keine Weiterverarbeitung.
-- Das Feld `Abbruchgrund` wird exakt mit dem Text der gewählten Option befüllt.
+- Das Feld `Abbruchgrund` wird exakt mit dem Text der gewählten Option befüllt, inkl Text in der Klammer.
 
 ##### C) Elfmeterschießen (Pflicht bei > 119:00 & Unentschieden)
 
@@ -378,16 +383,21 @@ Gegentore:
 - **xGoals**
 - **Ballbesitz**
 - **Pässe**
-- **Erfolgreiche Pässe** → Kreiswert über *PASSGENAUIGKEIT*
-- **Erfolgreiche Dribblings** → Kreiswert über *DRIBBLING-ERFOLGSQUOTE*
-
+- **ErfolgreichePässe** → Kreiswert über *PASSGENAUIGKEIT* in Prozent
+- **ErfolgreicheDribblings** → Kreiswert über *DRIBBLING-ERFOLGSQUOTE*
+- **GelbeKarten**
+- **RoteKarten**
+- 
 ##### G) Daten Gegner-Team
 - **AuswärtsT** → Tore Auswärtsteams
 - **SchüsseOpp**
 - **SchusspräzisionOpp**
-- **xGoalsOpponent**
+- **xGoalsOpp**
 - **PässeOpp**
-- **Erfolgreiche Pässe Opp**
+- **ErfolgreichePässeOpp** → Kreiswert über *PASSGENAUIGKEIT* in Prozent
+- **ErfolgreicheDribblingsOpp** → Kreiswert über *DRIBBLING-ERFOLGSQUOTE*
+- - **GelbeKartenOpp**
+- **RoteKartenOpp**
 
 ##### H) Verlängerung
 
@@ -398,53 +408,49 @@ Gegentore:
 
 ##### VALIDIERUNG SPIELERLISTE (zwingend vor jeder Weiterverarbeitung):
 
-1) Duplikaterkennung:
-- Zwei Einträge gelten als Duplikat, wenn (Name + POS) identisch sind.
-- Erkannte Duplikate werden zu einem Datensatz zusammengeführt.
+- Duplikat = gleicher Name + POS → zusammenführen  
+- Ziel: exakt 18 eindeutige Spieler  
+- Bewertung „N.V.“ → Feld leer
 
-2) Zielmenge:
-- Nach Deduplizierung müssen exakt 18 eindeutige Spieler existieren.
+#### POTM
 
-Weitere Regeln: Wenn Bewertung "N.V." wird das Feld leer gelassen.
+Wenn ein Abbruch (Pflicht bei Spielzeit < 90:00) vorliegt ist es verboten ein POTM zu vergeben. Dann ist POTM="" für alle.
 
-#### MOTM
+IF meta.gesamtwert_text != "Player of the Match":
+    POTM="" für alle
+ELSE:
+    POTM="x" für Spieler mit ballIcon=="ja"
+    sonst POTM=""
+    Wenn >1 Spieler ballIcon=="ja":
+        POTM="" für alle
+        SYSTEMFEHLER "Mehrfaches Ball-Icon"
 
-### MOTM – zwingendes Text-Gate (HARTE LOGIK)
-
-IF OCR_ROHDATEN.meta.gesamtwert_text != "Player of the Match" THEN
-  - MOTM = "" für alle Spieler
-  - ballIcon wird NICHT gelesen, NICHT ausgewertet, NICHT referenziert
-  - ENDE MOTM-LOGIK (keine weiteren Regeln dieses Blocks anwenden)
-
-ELSE
-  - MOTM = "x" genau für Spieler mit ballIcon == "ja", sonst ""
-  - Es darf exakt EIN Spieler MOTM = "x" haben
-  - Wenn mehr als ein ballIcon == "ja" existiert:
-      → MOTM = "" für alle Spieler
-      → SYSTEMFEHLER: "Mehrfaches Ball-Icon bei aktivem MOTM-Gate"
-
-END IF
-
-Verbote:
-- Kein Fallback
-- Keine Schätzung
-- Keine Ableitung aus Bewertung, Toren, Heatmap oder sonstigen UI-Elementen
-
+Verboten:
+- Ableitung aus Bewertung, Toren, Heatmap, Selektion
 
 
 ###Phase 3 - Output im CSV Format
 
+#### ZWINGENDE FORMATREGELN (höchste Priorität)
+
+FORMATIERUNGSREGELN:
+
+- Jede Tabelle wird als reiner CSV-Codeblock ausgegeben.
+- Ein Datensatz = exakt eine Zeile.
+- Für DataSpiele existiert genau 1 Zeile.
+- Für DataSpieler existieren exakt 18 Zeilen.
+- Alle Felder stehen horizontal in einer Zeile, getrennt durch Semikolon.
+- Vertikale Ausgabe von Feldern ist verboten.
+- Zeilenumbrüche innerhalb eines Datensatzes sind verboten.
+- Es werden KEINE Spaltenüberschriften ausgegeben.
+- Es wird KEIN zusätzlicher Text vor oder nach den Codeblöcken ausgegeben.
+- Ausgabe erfolgt strikt in zwei getrennten Codeblöcken:
+  1) DataSpiele
+  2) DataSpieler
+
 Jetzt werden die Tabellen für die Ausgabe gebaut.
 
-CSV-Format:
-Ein Datensatz = eine Zeile.
-Felder durch Semikolon getrennt.
-Keine Leerzeilen.
-Kein Zusatztext vor oder nach der CSV.
-
-Übertrage nun die Daten in die Tabellen und gib diese separat als Codeblock *ohne* Überschriften aus.
-
-### Tabelle: DataSpiele
+#### Tabelle: DataSpiele
 
 ```
 SpielID;
@@ -456,6 +462,11 @@ Heim;
 Auswärts;
 Ergebnis;
 Wo;
+Spieldauer;
+CleanSheet;
+Verlängerung;
+Elfmeterschießen;
+Abbruchgrund;
 Ballbesitz;
 Schüsse;
 SchüsseOpp;
@@ -465,22 +476,38 @@ xGoals;
 xGoalsOpponent;
 Pässe;
 PässeOpp;
-Erfolgreiche Pässe;
-Erfolgreiche Pässe Opp;
-Erfolgreiche Dribblings;
-Gelbe Karten;
-Rote Karten;
-Abbruchgrund;
-Spieldauer;
-CleanSheet;
-Verlängerung;
-Elfmeterschießen;
+ErfolgreichePässe;
+ErfolgreichePässe Opp;
+ErfolgreicheDribblings;
+ErfolgreicheDribblingsOpp;
+GelbeKarten;
+GelbeKartenOpp
+RoteKarten;
+RoteKartenOpp;
+zweikaempfe;
+zweikaempfeOpp;
+gew_zweikaempfe;
+gew_zweikaempfeOpp;
+abgefangen;
+abgefangenOpp;
+paraden;
+paradenOpp;
+fouls;
+foulsOpp;
+abseits;
+abseitsOpp;
+ecken;
+eckenOpp;
+freistöße;
+freistößeOpp;
+elfmeter;
+elfmeterOpp;
 Unsicher/Fehlt
 ```
 
 ---
 
-### Tabelle: DataSpieler
+#### Tabelle: DataSpieler
 
 ```
 SpielID;
@@ -490,7 +517,7 @@ Position;
 Bewertung;
 Tore;
 Vorlagen;
-MOTM;
+POTM;
 Unsicher/Fehlt
 ```
 
