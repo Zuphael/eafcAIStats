@@ -33,7 +33,7 @@ If you are using a PlayStation 5 (or PS5 Pro), the easiest workflow is to export
 
 ### 3. Prepare the master prompt in your language
 
-When copying the prompt from GitHub for the first time, use the **“Code” view**. In line 30, insert your club name into `"Your Clubname"`. This is important so the AI can clearly distinguish your team from the opponent.
+When copying the prompt from GitHub for the first time, use the **“Code” view**. In line 39, insert your club name into `"Your Clubname"`. This is important so the AI can clearly distinguish your team from the opponent.
 
 ### 4. Wait for the output
 
